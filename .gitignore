@@ -348,3 +348,12 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+
+
+
+# custom project intermediates and binaries
+OpenGLApplication/Output/**
+OpenGLApplication/OpenGLApplication/Intermediates/**
+
+!glew32.pdb
