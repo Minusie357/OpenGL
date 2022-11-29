@@ -1,7 +1,11 @@
 ﻿#include "Application.h"
 #include <iostream>
 #include <string>
+
 #include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace Minusi;
 
@@ -81,8 +85,10 @@ void Minusi::Application::Run()
 
 	bool isRight = true;
 	float triangleOffset = 0.0f;
+	float rotateOffset = 0.0f;
 	float triangleMaxOffset = 0.7f;
-	float triangleIncrement = 0.005f;
+	float triangleIncrement = 0.05f;
+	float rotateIncrement = 0.01f;
 	// loop until window closed
 	while (glfwWindowShouldClose(_MainWindow.get()) == false)
 	{
@@ -97,6 +103,7 @@ void Minusi::Application::Run()
 		{
 			triangleOffset -= triangleIncrement;
 		}
+		rotateOffset += rotateIncrement;
 
 		if (abs(triangleOffset) >= triangleMaxOffset)
 		{
@@ -109,7 +116,11 @@ void Minusi::Application::Run()
 
 		glUseProgram(_RenderingComponent->GetShader());
 
-		glUniform1f(_RenderingComponent->GetUniformXOffset(), triangleOffset);
+		glm::mat4 model(1.0f);
+		model = glm::rotate(model, 45 * rotateOffset * (float)(M_PI / 180), glm::vec3(0.f, 0.f, 1.f));
+		model = glm::translate(model, glm::vec3(triangleOffset, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.f));
+		glUniformMatrix4fv(_RenderingComponent->GetUniformModel(), 1, GL_FALSE, glm::value_ptr(model));
 
 		glBindVertexArray(_RenderingComponent->GetVAO());
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -129,11 +140,11 @@ void Minusi::RenderingComponent::CreateTriangle()
 		"\n"
 		"layout (location = 0) in vec3 pos;\n"
 		"\n"
-		"uniform float xOffset;\n"
+		"uniform mat4 model;\n"
 		"\n"
 		"void main()\n"
 		"{\n"
-		"	gl_Position = vec4(pos.x + xOffset, pos.y, pos.z, 1.0);\n"
+		"	gl_Position = model * vec4(pos.x * 0.4f, pos.y * 0.4f, pos.z, 1.0);\n"
 		"}";
 
 	std::string fragmentShader = 
@@ -236,5 +247,5 @@ void Minusi::RenderingComponent::_CompileShaders(const std::string& vertexShader
 		return;
 	}
 
-	_UniformXOffset = glGetUniformLocation(_Program, "xOffset");
+	_UniformModel = glGetUniformLocation(_Program, "model");
 }

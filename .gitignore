@@ -355,5 +355,6 @@ MigrationBackup/
 # custom project intermediates and binaries
 OpenGLApplication/Output/**
 OpenGLApplication/OpenGLApplication/Intermediates/**
+Libraries/GLM/doc/**
 
 !glew32.pdb

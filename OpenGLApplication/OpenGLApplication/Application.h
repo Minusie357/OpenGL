@@ -36,7 +36,7 @@ namespace Minusi
 		GLuint& GetVAO() { return _VAO; }
 		GLuint& GetVBO() { return _VBO; }
 		GLuint& GetShader() { return _Program; }
-		GLuint& GetUniformXOffset() { return _UniformXOffset; }
+		GLuint& GetUniformModel() { return _UniformModel; }
 
 	private:
 		void _AddShader(GLuint program, const std::string& code, GLenum shaderType);
@@ -47,7 +47,7 @@ namespace Minusi
 		GLuint														_VBO{};
 		GLuint														_Program{};
 
-		GLuint														_UniformXOffset{};
+		GLuint														_UniformModel{};
 	};
 
 
