@@ -36,15 +36,18 @@ namespace Minusi
 		GLuint& GetVAO() { return _VAO; }
 		GLuint& GetVBO() { return _VBO; }
 		GLuint& GetShader() { return _Program; }
+		GLuint& GetUniformXOffset() { return _UniformXOffset; }
 
 	private:
 		void _AddShader(GLuint program, const std::string& code, GLenum shaderType);
 		void _CompileShaders(const std::string& vertexShaderCode, const std::string& fragmentShaderCode);
 
 	private:
-		GLuint														_VAO;
-		GLuint														_VBO;
+		GLuint														_VAO{};
+		GLuint														_VBO{};
 		GLuint														_Program{};
+
+		GLuint														_UniformXOffset{};
 	};
 
 

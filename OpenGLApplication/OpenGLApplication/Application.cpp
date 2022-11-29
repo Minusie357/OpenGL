@@ -1,6 +1,7 @@
 ﻿#include "Application.h"
 #include <iostream>
 #include <string>
+#include <cmath>
 
 using namespace Minusi;
 
@@ -78,19 +79,38 @@ void Minusi::Application::Run()
 {
 	_RenderingComponent->CreateTriangle();
 
+	bool isRight = true;
+	float triangleOffset = 0.0f;
+	float triangleMaxOffset = 0.7f;
+	float triangleIncrement = 0.005f;
 	// loop until window closed
 	while (glfwWindowShouldClose(_MainWindow.get()) == false)
 	{
 		// get and handle user input events
 		glfwPollEvents();
 
+		if (isRight)
+		{
+			triangleOffset += triangleIncrement;
+		}
+		else
+		{
+			triangleOffset -= triangleIncrement;
+		}
+
+		if (abs(triangleOffset) >= triangleMaxOffset)
+		{
+			isRight = !isRight;
+		}
+
 		// clear window
 		glClearColor(0.0f, 0.f, 0.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-
-
 		glUseProgram(_RenderingComponent->GetShader());
+
+		glUniform1f(_RenderingComponent->GetUniformXOffset(), triangleOffset);
+
 		glBindVertexArray(_RenderingComponent->GetVAO());
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
@@ -109,9 +129,11 @@ void Minusi::RenderingComponent::CreateTriangle()
 		"\n"
 		"layout (location = 0) in vec3 pos;\n"
 		"\n"
+		"uniform float xOffset;\n"
+		"\n"
 		"void main()\n"
 		"{\n"
-		"	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);\n"
+		"	gl_Position = vec4(pos.x + xOffset, pos.y, pos.z, 1.0);\n"
 		"}";
 
 	std::string fragmentShader = 
@@ -213,4 +235,6 @@ void Minusi::RenderingComponent::_CompileShaders(const std::string& vertexShader
 		glGetProgramInfoLog(_Program, 1024, NULL, log);
 		return;
 	}
+
+	_UniformXOffset = glGetUniformLocation(_Program, "xOffset");
 }
